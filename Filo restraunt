@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dracoblade | The Iron & Flame Tavern</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary: #ff0000; /* Blood Red */
+            --secondary: #1a1a1a; /* Dark Grey */
+            --accent: #ffd700; /* Gold */
+            --text: #f0f0f0;
+            --font-header: 'Cinzel', serif;
+            --font-body: 'Lato', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #050505;
+            color: var(--text);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+        }
+
+        /* --- FLOATING FOOD EFFECTS LAYER --- */
+        /* This creates the constant floating effect requested */
+        .floating-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1; /* Behind content */
+            overflow: hidden;
+        }
+
+        .food-particle {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.3;
+            animation: floatUp 15s linear infinite;
+            filter: blur(1px);
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.4; }
+            80% { opacity: 0.4; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- HEADER --- */
+        header {
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.8);
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            border-bottom: 1px solid #333;
+            backdrop-filter: blur(5px);
+        }
+
+        .logo {
+            font-family: var(--font-header);
+            font-size: 2rem;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary);
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+            text-shadow: 0 0 8px var(--primary);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            background: radial-gradient(circle, #2a0000 0%, #000000 90%);
+        }
+
+        .hero h1 {
+            font-family: var(--font-header);
+            font-size: 5rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 3s infinite alternate;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            color: #ccc;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(255, 0, 0, 0.5); }
+            to { text-shadow: 0 0 20px rgba(255, 0, 0, 0.9); }
+        }
+
+        .btn {
+            padding: 15px 40px;
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: 0.4s;
+            font-family: var(--font-header);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        /* --- MENU SECTION --- */
+        .menu-section {
+            position: relative;
+            z-index: 2;
+            padding: 80px 10%;
+            background: #0a0a0a;
+        }
+
+        .section-title {
+            font-family: var(--font-header);
+            text-align: center;
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 60px;
+            text-transform: uppercase;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .menu-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border: 1px solid #333;
+            border-radius: 10px;
+            transition: 0.5s;
+            position: relative;
+            overflow: hidden;
+            opacity: 0; /* For JS Reveal */
+            transform: translateY(50px);
+        }
+
+        .menu-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.2);
+        }
+
+        .menu-card h3 {
+            font-family: var(--font-header);
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .price {
+            color: var(--accent);
+        }
+
+        .menu-card p {
+            color: #aaa;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* --- ABOUT SECTION --- */
+        .about-section {
+            padding: 80px 20px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(45deg, #000, #111);
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about-content h2 {
+            font-family: var(--font-header);
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 40px;
+            background: #000;
+            border-top: 1px solid #222;
+            position: relative;
+            z-index: 2;
+            color: #555;
+        }
+
+        /* --- SCROLL REVEAL ANIMATION CLASS --- */
+        .reveal {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.8s ease-out;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Floating Food Layer (Background) -->
+    <div class="floating-layer" id="floating-layer">
+        <!-- Generated by JS -->
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">DRACOBLADE</div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#menu">Menu</a></li>
+                <li><a href="#about">Our Story</a></li>
+                <li><a href="#">Reservations</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Forged in Fire,<br>Tasted in Glory.</h1>
+        <p>Experience the sharpest flavors of the realm.</p>
+        <button class="btn">View The Armory (Menu)</button>
+    </section>
+
+    <!-- Menu Section -->
+    <section class="menu-section" id="menu">
+        <h2 class="section-title">Signature Feasts</h2>
+        <div class="menu-grid">
+            
+            <!-- Card 1 -->
+            <div class="menu-card">
+                <h3>The Excalibur Strike <span class="price">$45</span></h3>
+                <p>A 16oz Prime Ribeye, seared at 1000 degrees. Served with dragon-fire roasted potatoes and garlic butter blade sauce.</p>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="menu-card">
+                <h3>Dragon Breath Wings <span class="price">$18</span></h3>
+                <p>Ghost pepper infused wings, smoked for 12 hours. Not for the faint of heart. Served with blue cheese sky dip.</p>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="menu-card">
+                <h3>The Void Burger <span class="price">$22</span></h3>
+                <p>Double smash wagyu patty, cheddar armor, dark charcoal bun, and "Blood" sauce. A hole in the flavor spectrum.</p>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="menu-card">
+                <h3>Steak Frites <span class="price">$35</span></h3>
+                <p>Flat iron steak cut thin, crispy iron fries, topped with caramelized onions and truffle aioli.</p>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="menu-card">
+                <h3>Phoenix Rising Cocktail <span class="price">$15</span></h3>
+                <p>Bourbon, maple syrup, angostura bitters, torched rosemary. It rises from the ashes.</p>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="menu-card">
+                <h3>Sharpen The Blade Platter <span class="price">$65</span></h3>
+                <p>Assorted cuts of premium steak, lamb chops, and seasonal vegetables. Enough to arm a small army.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="about-content">
+            <h2>The Legend of Dracoblade</h2>
+            <p>Born from the fires of the old forge, Dracoblade isn't just a restaurant; it's a sharpening station for your palate. We believe that a meal should be as bold as the swing of a sword. Our ingredients are sourced from the shadow lands, and our chefs wield knives with the precision of knights.</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2023 Dracoblade Restaurant. Forged with Passion.</p>
+    </footer>
+
+    <script>
+        // 1. FLOATING FOOD GENERATOR
+        const floatingLayer = document.getElementById('floating-layer');
+        
+        // Food icons (using Emojis for simplicity and creativity)
+        const foods = ['🍖', '🥩', '🍗', '🍔', '🥃', '🍷', '🍟', '🥕', '🌶️', '🗡️', '🛡️'];
+
+        function createFoodParticle() {
+            const el = document.createElement('div');
+            el.classList.add('food-particle');
+            el.innerText = foods[Math.floor(Math.random() * foods.length)];
+            
+            // Random positioning
+            el.style.left = Math.random() * 100 + 'vw';
+            
+            // Random size variation
+            el.style.fontSize = (Math.random() * 2 + 1.5) + 'rem';
+            
+            // Random speed
+            el.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            
+            // Random delay
+            el.style.animationDelay = (Math.random() * 5) + 's';
+
+            floatingLayer.appendChild(el);
+
+            // Clean up after animation to save memory
+            setTimeout(() => {
+                el.remove();
+            }, 15000);
+        }
+
+        // Create a new food particle every 500ms
+        setInterval(createFoodParticle, 500);
+
+
+        // 2. SCROLL REVEAL ANIMATIONS
+        const observerOptions = {
+            threshold: 0
